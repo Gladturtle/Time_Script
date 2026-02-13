@@ -1,6 +1,7 @@
 import requests
 import datetime
 import win32api
+import sys
 
 def win_set_time(time_tuple):
     
@@ -11,23 +12,27 @@ def win_set_time(time_tuple):
     print(system_time)
     win32api.SetSystemTime(*system_time)
 
-response = requests.get("https://timeapi.io/api/v1/time/current/zone?timezone=Asia/Kolkata")
-api_time = response.json()
-hour = (int(api_time['time'][:2])-5)
-mint = (int(api_time['time'][3:5])-30)
-if mint<0:
-    mint = 60+mint
-    hour = hour-1
-if hour<0:
-    hour = 24+hour
+try:
 
-time_tuple = ( int(api_time['date'][:4]), # Year
-               int(api_time['date'][5:7]), # Month
-               int(api_time['date'][8:10]), # Day
-               hour, # Hour
-               mint, # Minute
-               int(api_time['time'][6:8]), # Second
-                  0, # Millisecond
-              )
-print(time_tuple)
-win_set_time(time_tuple)
+    response = requests.get("https://timeapi.io/api/v1/time/current/zone?timezone=Asia/Kolkata")
+    api_time = response.json()
+    hour = (int(api_time['time'][:2])-5)
+    mint = (int(api_time['time'][3:5])-30)
+    if mint<0:
+        mint = 60+mint
+        hour = hour-1
+    if hour<0:
+        hour = 24+hour
+
+    time_tuple = ( int(api_time['date'][:4]), # Year
+                int(api_time['date'][5:7]), # Month
+                int(api_time['date'][8:10]), # Day
+                hour, # Hour
+                mint, # Minute
+                int(api_time['time'][6:8]), # Second
+                    0, # Millisecond
+                )
+    print(time_tuple)
+    win_set_time(time_tuple)
+except:
+    sys.exit()
